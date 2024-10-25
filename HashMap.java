@@ -86,7 +86,33 @@ public class HashMap<K, V> implements Cloneable {
         vetor = new ListaSimplesDesordenada[capacidadeInicial];
     }
 
-   
+    // Método para adicionar um item
+    public void guardeUmItem(K chave, V valor) throws Exception {
+        // Calcular o hash da chave
+        int hash = chave.hashCode();
+        // Calcular o índice no vetor
+        int indice = Math.abs(hash) % capacidadeInicial;
+
+        // Verificar se a lista na posição indicada existe, senão criar
+        if (vetor[indice] == null) {
+            vetor[indice] = new ListaSimplesDesordenada<>();
+            qtdPosOcupadas++;
+        }
+        // Criar um novo Elemento com chave e valor
+        Element newElement = new Element(chave, valor);
+        // Verificar se a chave já existe na lista, se sim, substituir o valor
+        ListaSimplesDesordenada<Element> lista = vetor[indice];
+        for (Element elem : lista) {
+            if (elem.getChave().equals(chave)) {
+                elem.setValor(valor); // Atualiza o valor se a chave já existe
+                return;
+            }
+        }
+        // Se a chave não existe, adiciona o novo elemento na lista
+        lista.guardeUmItemNoInicio(newElement);
+        // Incrementa o contador de elementos
+        qtdElems++;
+    }
 
     /*
      * public V recupereUmItem (K chave) throws Exception
