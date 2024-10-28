@@ -80,7 +80,7 @@ public class HashMap<K, V> implements Cloneable {
     private int capacidadeInicial;
     private float txMinDesperdicio, txMaxDesperdicio;
 
-   // construtores
+    // construtores
     public HashMap(int capacidadeInicial) {
         this.capacidadeInicial = capacidadeInicial;
         vetor = new ListaSimplesDesordenada[capacidadeInicial];
@@ -98,16 +98,18 @@ public class HashMap<K, V> implements Cloneable {
             vetor[indice] = new ListaSimplesDesordenada<>();
             qtdPosOcupadas++;
         }
+
         // Criar um novo Elemento com chave e valor
         Element newElement = new Element(chave, valor);
-        // Verificar se a chave já existe na lista, se sim, substituir o valor
+
+        // Verificar se a chave já existe na lista
         ListaSimplesDesordenada<Element> lista = vetor[indice];
         for (Element elem : lista) {
             if (elem.getChave().equals(chave)) {
-                elem.setValor(valor); // Atualiza o valor se a chave já existe
-                return;
+                throw new Exception("Chave duplicada: " + chave); // Lançar exceção se a chave já existe
             }
         }
+
         // Se a chave não existe, adiciona o novo elemento na lista
         lista.guardeUmItemNoInicio(newElement);
         // Incrementa o contador de elementos
@@ -121,23 +123,23 @@ public class HashMap<K, V> implements Cloneable {
      * {}
      */
 
-     // overrides
-        // Método toString para imprimir o HashMap
-        @Override
-        public String toString() {
-            String result = "HashMap:\n"; // Inicia com a representação inicial
-    
-            // Percorrer o vetor e listar os elementos de cada posição
-            for (int i = 0; i < vetor.length; i++) {
-                if (vetor[i] != null) {
-                    result += "Índice " + i + ": "; // Concatenar o índice
-                    for (Element elem : vetor[i]) {
-                        result += elem.toString() + " "; // Concatenar o elemento
-                    }
-                    result += "\n"; // Nova linha após cada índice
+    // overrides
+    // Método toString para imprimir o HashMap
+    @Override
+    public String toString() {
+        String result = "HashMap:\n"; // Inicia com a representação inicial
+
+        // Percorrer o vetor e listar os elementos de cada posição
+        for (int i = 0; i < vetor.length; i++) {
+            if (vetor[i] != null) {
+                result += "Índice " + i + ": "; // Concatenar o índice
+                for (Element elem : vetor[i]) {
+                    result += elem.toString() + " "; // Concatenar o elemento
                 }
+                result += "\n"; // Nova linha após cada índice
             }
-    
-            return result; // Retorna a representação final
         }
+
+        return result; // Retorna a representação final
+    }
 }
