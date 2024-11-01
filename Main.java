@@ -17,7 +17,7 @@ public class Main {
             System.out.println(map.toString());
 
             // Atualizando um valor de uma chave existente
-            map.guardeUmItem("chave1", 150);
+            // map.guardeUmItem("chave1", 150); //teste de chave duplicada
 
             map.guardeUmItem("chave6", 600);
             map.guardeUmItem("chave7", 10);
@@ -26,6 +26,13 @@ public class Main {
 
             // Imprimindo o conteúdo do HashMap
             System.out.println(map.toString());
+
+            map.removaUmItem("chave8");
+
+            // Imprimindo o conteúdo do HashMap
+            System.out.println(map.toString());
+
+            map.removaUmItem("chave8");
         } catch (Exception e) {
             e.printStackTrace();
         }

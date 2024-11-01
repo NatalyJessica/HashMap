@@ -1,3 +1,6 @@
+import java.util.NoSuchElementException;
+import java.util.Iterator;
+
 public class HashMap<K, V> implements Cloneable {
     private class Element {
         private K chave;
@@ -92,16 +95,13 @@ public class HashMap<K, V> implements Cloneable {
         int hash = chave.hashCode();
         // Calcular o índice no vetor
         int indice = Math.abs(hash) % capacidadeInicial;
-
         // Verificar se a lista na posição indicada existe, senão criar
         if (vetor[indice] == null) {
             vetor[indice] = new ListaSimplesDesordenada<>();
             qtdPosOcupadas++;
         }
-
         // Criar um novo Elemento com chave e valor
         Element newElement = new Element(chave, valor);
-
         // Verificar se a chave já existe na lista
         ListaSimplesDesordenada<Element> lista = vetor[indice];
         for (Element elem : lista) {
@@ -109,7 +109,6 @@ public class HashMap<K, V> implements Cloneable {
                 throw new Exception("Chave duplicada: " + chave); // Lançar exceção se a chave já existe
             }
         }
-
         // Se a chave não existe, adiciona o novo elemento na lista
         lista.guardeUmItemNoInicio(newElement);
         // Incrementa o contador de elementos
@@ -119,10 +118,41 @@ public class HashMap<K, V> implements Cloneable {
     /*
      * public V recupereUmItem (K chave) throws Exception
      * {}
-     * public void removaUmItem (K chave) throws Exception
-     * {}
      */
+    public void removaUmItem(K chave) throws Exception {
+        // Calcula o hash e o índice no vetor
+        int hash = chave.hashCode();
+        int indice = Math.abs(hash) % capacidadeInicial;
+    
+        // Verifica se existe uma lista na posição calculada
+        ListaSimplesDesordenada<Element> lista = vetor[indice];
+        if (lista == null) {
+            throw new NoSuchElementException("Chave não encontrada: " + chave); 
+        }
+        // Percorre a lista para encontrar o elemento com a chave fornecida
+        Iterator<Element> iterador = lista.iterator();
+        while (iterador.hasNext()) {
+            Element elem = iterador.next();
+            if (elem.getChave().equals(chave)) {
+                lista.removaItemIndicado(elem); // Remove o elemento da lista
+                qtdElems--; // Decrementa o contador de itens armazenados
+    
+                // Se a lista ficou vazia após a remoção, atualiza `qtdPosOcupadas`
+                if (lista.isVazia()) {
+                    vetor[indice] = null;
+                    qtdPosOcupadas--;
+                }
+                return; // Termina o método após a remoção bem-sucedida
+            }
+        }
+        throw new NoSuchElementException("Chave não encontrada: " + chave);
+    }
 
+    
+    public int getQtdElems() {
+        return qtdElems;
+    }
+    
     // overrides
     // Método toString para imprimir o HashMap
     @Override
