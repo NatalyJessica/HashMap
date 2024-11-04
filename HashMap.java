@@ -1,4 +1,3 @@
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class HashMap<K, V> implements Cloneable {
@@ -84,6 +83,7 @@ public class HashMap<K, V> implements Cloneable {
     private float txMinDesperdicio, txMaxDesperdicio;
 
     // construtores
+    @SuppressWarnings("unchecked")
     public HashMap(int capacidadeInicial, float txMinDesperdicio, float txMaxDesperdicio) {
         this.capacidadeInicial = capacidadeInicial;
         this.txMinDesperdicio = txMinDesperdicio;
@@ -91,7 +91,7 @@ public class HashMap<K, V> implements Cloneable {
         vetor = new ListaSimplesDesordenada[capacidadeInicial];
     }
 
-    // Método para adicionar um item
+    // METODO REMOVE ITEM
     public void guardeUmItem(K chave, V valor) throws Exception {
         if (qtdElems / (float) vetor.length > txMaxDesperdicio) {
             redimensionarVetor(vetor.length * 2);
@@ -118,12 +118,8 @@ public class HashMap<K, V> implements Cloneable {
         // Incrementa o contador de elementos
         qtdElems++;
     }
-
-    /*
-     * public V recupereUmItem (K chave) throws Exception
-     * {}
-     */
-    
+ 
+    //METODO REMOVER ITEM
     public void removaUmItem(K chave) throws Exception {
         // Calcula o hash e o índice no vetor
         int hash = chave.hashCode();
@@ -134,9 +130,7 @@ public class HashMap<K, V> implements Cloneable {
             throw new NoSuchElementException("Chave não encontrada: " + chave);
         }
         // Percorre a lista para encontrar o elemento com a chave fornecida
-        Iterator<Element> iterador = lista.iterator();
-        while (iterador.hasNext()) {
-            Element elem = iterador.next();
+        for (Element elem : lista) {
             if (elem.getChave().equals(chave)) {
                 lista.removaItemIndicado(elem); // Remove o elemento da lista
                 qtdElems--; // Decrementa o contador de itens armazenados
@@ -157,6 +151,8 @@ public class HashMap<K, V> implements Cloneable {
         throw new NoSuchElementException("Chave não encontrada: " + chave);
     }
 
+    //METODO PARA REDIMENCIONAR ITEM 
+    @SuppressWarnings("unchecked")
     private void redimensionarVetor(int novaCapacidade) throws Exception {
         ListaSimplesDesordenada<Element>[] novoVetor = new ListaSimplesDesordenada[novaCapacidade];
 
@@ -176,7 +172,30 @@ public class HashMap<K, V> implements Cloneable {
         }
 
         vetor = novoVetor;
+    } 
+
+    //METODO PARA RECUPERAR ITEM INDICADO
+    public V recupereUmItem(K chave) throws Exception {
+        // Calcula o hash e o índice no vetor
+        int hash = chave.hashCode();
+        int indice = Math.abs(hash) % vetor.length;
+    
+        // Obtém a lista correspondente ao índice
+        ListaSimplesDesordenada<Element> lista = vetor[indice];
+        if (lista == null) {
+            throw new NoSuchElementException("Chave não encontrada: " + chave);
+        }
+    
+        // Percorre a lista para encontrar o elemento com a chave fornecida
+        for (Element elem : lista) {
+            if (elem.getChave().equals(chave)) {
+                return elem.getValor(); // Retorna o valor associado à chave
+            }
+        }
+    
+        throw new NoSuchElementException("Chave não encontrada: " + chave);
     }
+    
     
     // overrides
     // Método toString para imprimir o HashMap
