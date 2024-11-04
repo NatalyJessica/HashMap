@@ -2,37 +2,40 @@ public class Main {
     public static void main(String[] args) {
         try {
             // Criando uma instância de HashMap com capacidade inicial de 10
-            HashMap<String, Integer> map = new HashMap<>(3);
+            HashMap<String, String> map = new HashMap<>(4, 0.25f, 0.75f);
 
-            // Adicionando itens ao HashMap
-            map.guardeUmItem("chave1", 1);
-            map.guardeUmItem("chave2", 200);
-            map.guardeUmItem("chave3", 300);
+           
+            // Inserindo elementos no HashMap
+            map.guardeUmItem("chave1", "valor1");
+            map.guardeUmItem("chave2", "valor2");
+            map.guardeUmItem("chave3", "valor3");
+            map.guardeUmItem("chave4", "valor4");
 
-            // Adicionando mais itens para testar o comportamento do hash
-            map.guardeUmItem("chave4", 400);
-            map.guardeUmItem("chave5", 500);
+            System.out.println("HashMap após inserção de 4 elementos:");
+            System.out.println(map);
 
-            // Imprimindo o conteúdo do HashMap
-            System.out.println(map.toString());
+            // Inserindo mais um elemento para forçar o redimensionamento
+            map.guardeUmItem("chave5", "valor5");
 
-            // Atualizando um valor de uma chave existente
-            // map.guardeUmItem("chave1", 150); //teste de chave duplicada
+            System.out.println("HashMap após inserção de um 5º elemento (redimensionamento esperado):");
+            System.out.println(map);
 
-            map.guardeUmItem("chave6", 600);
-            map.guardeUmItem("chave7", 10);
-            map.guardeUmItem("chave8", 400);
-            map.guardeUmItem("chave9", 5);
+            // Removendo elementos
+            map.removaUmItem("chave1");
+            map.removaUmItem("chave2");
 
-            // Imprimindo o conteúdo do HashMap
-            System.out.println(map.toString());
+            System.out.println("HashMap após remoção de 2 elementos:");
+            System.out.println(map);
 
-            map.removaUmItem("chave8");
+            // Removendo mais elementos para forçar a redução do vetor
+            map.removaUmItem("chave3");
+            map.removaUmItem("chave4");
 
-            // Imprimindo o conteúdo do HashMap
-            System.out.println(map.toString());
+            System.out.println("HashMap após remoção de mais 2 elementos (redução esperada):");
+            System.out.println(map);
 
-            map.removaUmItem("chave8");
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
