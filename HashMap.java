@@ -28,6 +28,7 @@ public class HashMap<K, V> implements Cloneable {
         }
 
         // Override do equals
+        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object o) {
             if (this == o)
@@ -96,7 +97,6 @@ public class HashMap<K, V> implements Cloneable {
         if (qtdElems / (float) vetor.length > txMaxDesperdicio) {
             redimensionarVetor(vetor.length * 2);
         }
-
         int hash = chave.hashCode();
         int indice = Math.abs(hash) % vetor.length;
 
@@ -118,8 +118,8 @@ public class HashMap<K, V> implements Cloneable {
         // Incrementa o contador de elementos
         qtdElems++;
     }
- 
-    //METODO REMOVER ITEM
+
+    // METODO REMOVER ITEM
     public void removaUmItem(K chave) throws Exception {
         // Calcula o hash e o índice no vetor
         int hash = chave.hashCode();
@@ -134,14 +134,15 @@ public class HashMap<K, V> implements Cloneable {
             if (elem.getChave().equals(chave)) {
                 lista.removaItemIndicado(elem); // Remove o elemento da lista
                 qtdElems--; // Decrementa o contador de itens armazenados
-    
+
                 // Se a lista ficou vazia após a remoção, atualiza `qtdPosOcupadas`
                 if (lista.isVazia()) {
                     vetor[indice] = null;
                     qtdPosOcupadas--;
                 }
 
-                if ((vetor.length - qtdElems) / (float) vetor.length > txMinDesperdicio && vetor.length > capacidadeInicial) {
+                if ((vetor.length - qtdElems) / (float) vetor.length > txMinDesperdicio
+                        && vetor.length > capacidadeInicial) {
                     redimensionarVetor(vetor.length / 2);
                 }
 
@@ -151,7 +152,29 @@ public class HashMap<K, V> implements Cloneable {
         throw new NoSuchElementException("Chave não encontrada: " + chave);
     }
 
-    //METODO PARA REDIMENCIONAR ITEM 
+    // METODO PARA RECUPERAR ITEM INDICADO
+    public V recupereUmItem(K chave) throws Exception {
+        // Calcula o hash e o índice no vetor
+        int hash = chave.hashCode();
+        int indice = Math.abs(hash) % vetor.length;
+
+        // Obtém a lista correspondente ao índice
+        ListaSimplesDesordenada<Element> lista = vetor[indice];
+        if (lista == null) {
+            throw new NoSuchElementException("Chave não encontrada: " + chave);
+        }
+
+        // Percorre a lista para encontrar o elemento com a chave fornecida
+        for (Element elem : lista) {
+            if (elem.getChave().equals(chave)) {
+                return elem.getValor(); // Retorna o valor associado à chave
+            }
+        }
+
+        throw new NoSuchElementException("Chave não encontrada: " + chave);
+    }
+
+    // METODO PARA REDIMENCIONAR ITEM
     @SuppressWarnings("unchecked")
     private void redimensionarVetor(int novaCapacidade) throws Exception {
         ListaSimplesDesordenada<Element>[] novoVetor = new ListaSimplesDesordenada[novaCapacidade];
@@ -172,31 +195,8 @@ public class HashMap<K, V> implements Cloneable {
         }
 
         vetor = novoVetor;
-    } 
-
-    //METODO PARA RECUPERAR ITEM INDICADO
-    public V recupereUmItem(K chave) throws Exception {
-        // Calcula o hash e o índice no vetor
-        int hash = chave.hashCode();
-        int indice = Math.abs(hash) % vetor.length;
-    
-        // Obtém a lista correspondente ao índice
-        ListaSimplesDesordenada<Element> lista = vetor[indice];
-        if (lista == null) {
-            throw new NoSuchElementException("Chave não encontrada: " + chave);
-        }
-    
-        // Percorre a lista para encontrar o elemento com a chave fornecida
-        for (Element elem : lista) {
-            if (elem.getChave().equals(chave)) {
-                return elem.getValor(); // Retorna o valor associado à chave
-            }
-        }
-    
-        throw new NoSuchElementException("Chave não encontrada: " + chave);
     }
-    
-    
+
     // overrides
     // Método toString para imprimir o HashMap
     @Override
@@ -219,5 +219,61 @@ public class HashMap<K, V> implements Cloneable {
 
     public int getQtdElems() {
         return qtdElems;
+    }
+
+    // Construtor de cópia
+    public HashMap(HashMap<K, V> original) throws Exception {
+        this(original.capacidadeInicial, original.txMinDesperdicio, original.txMaxDesperdicio);
+        this.qtdElems = original.qtdElems;
+        this.qtdPosOcupadas = original.qtdPosOcupadas;
+        for (int i = 0; i < original.vetor.length; i++) {
+            if (original.vetor[i] != null) {
+                this.vetor[i] = new ListaSimplesDesordenada<>();
+                for (Element elem : original.vetor[i]) {
+                    this.vetor[i].guardeUmItemNoInicio(elem.clone());
+                }
+            }
+        }
+    }
+
+    // Método clone
+    @Override
+    public HashMap<K, V> clone() {
+        try {
+            return new HashMap<>(this);
+        } catch (Exception e) {
+            
+        }
+         return null;
+    }
+
+    // Método equals
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        HashMap<?, ?> that = (HashMap<?, ?>) o;
+        if (qtdElems != that.qtdElems || capacidadeInicial != that.capacidadeInicial)
+            return false;
+
+        for (int i = 0; i < vetor.length; i++) {
+            if (vetor[i] != null ? !vetor[i].equals(that.vetor[i]) : that.vetor[i] != null)
+                return false;
+        }
+        return true;
+    }
+
+    // Método hashCode
+    @Override
+    public int hashCode() {
+        int result = capacidadeInicial;
+        result = 31 * result + qtdElems;
+        for (ListaSimplesDesordenada<Element> lista : vetor) {
+            result = 31 * result + (lista != null ? lista.hashCode() : 0);
+        }
+        return result;
     }
 }
